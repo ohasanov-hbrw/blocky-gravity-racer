@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://1cryv4upaivm"]
+[gd_scene load_steps=7 format=3 uid="uid://yi100fp20i4c"]
 
 [ext_resource type="Script" uid="uid://mdhot145mcyx" path="res://Scripts/ship_floater.gd" id="1_176aj"]
 [ext_resource type="ArrayMesh" uid="uid://cnt6b3nuniex6" path="res://Meshes/ship1.res" id="1_filar"]
@@ -58,8 +58,7 @@ sky_mode = 1
 
 [node name="Ship" type="RigidBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.68188, 0.00939089)
-mass = 0.198
-gravity_scale = 0.0
+mass = 0.2
 script = ExtResource("1_176aj")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ship"]

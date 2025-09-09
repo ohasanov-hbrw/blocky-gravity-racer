@@ -70,14 +70,16 @@ func _physics_process(delta: float) -> void:
 	apply_force(delta * (Vector3(0,front_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(front_thruster.raycast.transform.origin) - self.transform.origin)
 	apply_force(delta * (Vector3(0,back_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(back_thruster.raycast.transform.origin) - self.transform.origin)
 	
-	if(Input.is_action_pressed("ui_up")):
+	if(Input.is_action_pressed("thrust")):
 		apply_central_force(delta * (Vector3(0,0,-70) * self.transform.basis.inverse()))
-	if(Input.is_action_pressed("ui_down")):
-		apply_central_force(delta * (Vector3(0,0,70) * self.transform.basis.inverse()))
-	if(Input.is_action_pressed("ui_right")):
+	if(Input.is_action_pressed("reverse")):
+		apply_central_force(delta * (Vector3(0,0,50) * self.transform.basis.inverse()))
+	if(Input.is_action_pressed("right")):
 		apply_torque(delta * (Vector3(0,-20,-5) * self.transform.basis.inverse()))
-	if(Input.is_action_pressed("ui_left")):
+	if(Input.is_action_pressed("left")):
 		apply_torque(delta * (Vector3(0,20,5) * self.transform.basis.inverse()))
-		
-	apply_force(-5 * delta * ((linear_velocity * self.transform.basis) * Vector3(5,0,0.5)) * self.transform.basis.inverse())
+	var airbrake = 1
+	if(Input.is_action_pressed("airbrake")):
+		airbrake = 5
+	apply_force(-5 * delta * ((linear_velocity * self.transform.basis) * Vector3(airbrake,0,0.3)) * self.transform.basis.inverse())
 	apply_torque(-7 * delta * ((angular_velocity * self.transform.basis) * Vector3(0,1,0)) * self.transform.basis.inverse())
