@@ -1,0 +1,80 @@
+[gd_scene load_steps=8 format=3 uid="uid://cpclqqjv8du7u"]
+
+[ext_resource type="Script" uid="uid://mdhot145mcyx" path="res://Scripts/ship_floater.gd" id="1_176aj"]
+[ext_resource type="ArrayMesh" uid="uid://cnt6b3nuniex6" path="res://Meshes/ship1.res" id="1_filar"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_filar"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_176aj"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_filar"]
+
+[sub_resource type="Environment" id="Environment_filar"]
+background_mode = 1
+background_color = Color(0.52549, 0.584314, 0.756863, 0.882353)
+background_energy_multiplier = 1.48
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+reflected_light_source = 1
+tonemap_exposure = 0.66
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_use_occlusion = true
+sdfgi_read_sky_light = false
+glow_enabled = true
+fog_mode = 1
+fog_density = 1.0
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_176aj"]
+points = PackedVector3Array(-0.247465, 0.113436, -0.179355, 0.470113, -0.0645689, 0.289812, -0.406298, -0.228063, 0.395945, -0.025601, 0.471812, 0.588508, 0.134214, -0.104752, -0.72078, 0.398774, -0.229492, 0.397962, -0.104867, -0.227841, -0.567533, 0.121541, 0.203569, -0.248125, -0.489481, -0.108723, 0.27761, -0.375099, -0.11296, 0.57276, 0.395849, 0.0923878, 0.588508, -0.12486, -0.0871048, -0.727705, -0.025601, 0.471812, 0.398767, 0.387735, -0.220107, 0.0905202, -0.112702, 0.203569, -0.248125, 0.251715, 0.113436, -0.159154, 0.380694, -0.1096, 0.562985, -0.377581, 0.0742278, 0.52256, 0.0163954, 0.471812, 0.398767, 0.11359, -0.221711, -0.558882, -0.396245, -0.219516, 0.109835, 0.127174, 0.0381472, -0.57556, -0.374471, 0.0579716, 0.1914, 0.463863, -0.120758, 0.16774, 0.344388, 0.0950926, 0.189531, -0.473325, -0.101321, 0.187329, -0.12726, -0.111535, -0.740514, -0.132306, 0.0404256, -0.560743, 0.455045, -0.0780412, 0.162965, 0.47699, -0.12732, 0.295256, 0.147627, -0.000797297, -0.581059, -0.13043, 0.203403, -0.229791)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="."]
+transform = Transform3D(35.819, 0, 0, 0, 0.189714, 0, 0, 0, 29.5055, 0, -0.425831, 0)
+gi_mode = 2
+mesh = SubResource("BoxMesh_filar")
+material = SubResource("StandardMaterial3D_176aj")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="CSGMesh3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CSGMesh3D/StaticBody3D"]
+shape = SubResource("BoxShape3D_filar")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_filar")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.145271, 0.989392, 0, -0.989392, 0.145271, 0, 1.59712, 0)
+light_energy = 0.515
+shadow_enabled = true
+sky_mode = 1
+
+[node name="Ship" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24057, 0.00939089)
+mass = 0.198
+script = ExtResource("1_176aj")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ship"]
+gi_mode = 2
+mesh = ExtResource("1_filar")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ship"]
+shape = SubResource("ConvexPolygonShape3D_176aj")
+
+[node name="Raycasters" type="Node3D" parent="Ship"]
+
+[node name="FrontRay" type="RayCast3D" parent="Ship/Raycasters"]
+transform = Transform3D(1, 0, 0, 0, 0.302795, -0.629107, 0, 0.159896, 1.19134, 0, -0.165319, -0.658653)
+
+[node name="BackRay" type="RayCast3D" parent="Ship/Raycasters"]
+transform = Transform3D(0.99992, -0.00426651, -0.0018396, 0.0113524, 0.287759, 0.713558, -0.00552028, -0.181043, 1.13421, 0, -0.173675, 0.474971)
+
+[node name="LeftRay" type="RayCast3D" parent="Ship/Raycasters"]
+transform = Transform3D(0.866025, 0.17, 0, -0.5, 0.294449, 0, 0, 0, 1.34, -0.4, -0.175, 0)
+
+[node name="RightRay" type="RayCast3D" parent="Ship/Raycasters"]
+transform = Transform3D(0.866025, -0.17, 0, 0.5, 0.294449, 0, 0, 0, 1.34, 0.4, -0.175, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-0.076458, 0.129092, -0.988681, 0, 0.991583, 0.129471, 0.997073, 0.00989905, -0.0758144, -2.50472, 1.31073, -0.267465)
