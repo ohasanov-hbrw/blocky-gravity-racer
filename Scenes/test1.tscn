@@ -82,8 +82,8 @@ sky_mode = 1
 
 [node name="Ship" type="RigidBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.382009, 0.00939089)
-mass = 0.198
-gravity_scale = 0.0
+mass = 0.15
+gravity_scale = 0.9
 script = ExtResource("1_176aj")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ship"]

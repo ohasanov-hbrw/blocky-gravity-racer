@@ -5,11 +5,11 @@ class Thruster:
 	var p = 1
 	var i = 0
 	var d = 0
-	var set_distance = 0.25
+	var set_distance = 0.3
 	var prev_error = 0
 	var integral = 0
-	var max_force = 500
-	var min_force = -500
+	var max_force = 700
+	var min_force = -100
 	func _init(raycast, p, i, d) -> void:
 		self.raycast = raycast
 		self.p = p
@@ -65,19 +65,19 @@ func _ready() -> void:
 	back_thruster = Thruster.new($Raycasters/BackRay, 800, 1, 50)
 	
 func _physics_process(delta: float) -> void:
-	apply_force(delta * transform.basis.x.inverse() * (Vector3(0,left_thruster.update_physics(delta),0)), to_global(left_thruster.raycast.transform.origin) - self.transform.origin)
-	apply_force(delta * transform.basis.x.inverse() * (Vector3(0,right_thruster.update_physics(delta),0)), to_global(right_thruster.raycast.transform.origin) - self.transform.origin)
-	apply_force(delta * transform.basis.x.inverse() * (Vector3(0,front_thruster.update_physics(delta),0)), to_global(front_thruster.raycast.transform.origin) - self.transform.origin)
-	apply_force(delta * transform.basis.x.inverse() * (Vector3(0,back_thruster.update_physics(delta),0)), to_global(back_thruster.raycast.transform.origin) - self.transform.origin)
+	apply_force(delta * (Vector3(0,left_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(left_thruster.raycast.transform.origin) - self.transform.origin)
+	apply_force(delta * (Vector3(0,right_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(right_thruster.raycast.transform.origin) - self.transform.origin)
+	apply_force(delta * (Vector3(0,front_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(front_thruster.raycast.transform.origin) - self.transform.origin)
+	apply_force(delta * (Vector3(0,back_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(back_thruster.raycast.transform.origin) - self.transform.origin)
 	
 	if(Input.is_action_pressed("ui_up")):
-		apply_force(delta * (Vector3(0,0,-20)))
+		apply_central_force(delta * (Vector3(0,0,-70) * self.transform.basis.inverse()))
 	if(Input.is_action_pressed("ui_down")):
-		apply_force(delta * (Vector3(0,0,20)))
+		apply_central_force(delta * (Vector3(0,0,70) * self.transform.basis.inverse()))
 	if(Input.is_action_pressed("ui_right")):
-		apply_torque(delta * to_global(Vector3(0,-20,-5)))
+		apply_torque(delta * (Vector3(0,-20,-5) * self.transform.basis.inverse()))
 	if(Input.is_action_pressed("ui_left")):
-		apply_torque(delta * to_global(Vector3(0,20,5)))
+		apply_torque(delta * (Vector3(0,20,5) * self.transform.basis.inverse()))
 		
-	#apply_force(delta * to_global(to_local(linear_velocity) * Vector3(5,0,1)) * -5)
-	print(to_local(linear_velocity))
+	apply_force(-5 * delta * ((linear_velocity * self.transform.basis) * Vector3(5,0,0.5)) * self.transform.basis.inverse())
+	apply_torque(-7 * delta * ((angular_velocity * self.transform.basis) * Vector3(0,1,0)) * self.transform.basis.inverse())
