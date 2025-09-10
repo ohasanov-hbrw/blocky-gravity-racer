@@ -1,21 +1,8 @@
-[gd_scene load_steps=25 format=3 uid="uid://yi100fp20i4c"]
+[gd_scene load_steps=7 format=3 uid="uid://yi100fp20i4c"]
 
 [ext_resource type="Script" uid="uid://mdhot145mcyx" path="res://Scripts/ship_floater.gd" id="1_176aj"]
 [ext_resource type="ArrayMesh" uid="uid://cnt6b3nuniex6" path="res://Meshes/ship1.res" id="1_filar"]
 [ext_resource type="Texture2D" uid="uid://co2wi3q4lq1p7" path="res://Textures/texture_01.png" id="1_isvvm"]
-[ext_resource type="Resource" uid="uid://cslvcweyejh3c" path="res://addons/SphynxMotionBlurToolkit/PreBlurProcessing/default_camera_movement_component.tres" id="2_ttosy"]
-[ext_resource type="Resource" uid="uid://iru8ynu04i00" path="res://addons/SphynxMotionBlurToolkit/PreBlurProcessing/default_camera_rotation_component.tres" id="3_rdg0y"]
-[ext_resource type="Resource" uid="uid://rp3mpjmisoyh" path="res://addons/SphynxMotionBlurToolkit/PreBlurProcessing/default_object_movement_component.tres" id="4_56ulr"]
-[ext_resource type="Resource" uid="uid://c8ulad7utgrg7" path="res://addons/SphynxMotionBlurToolkit/PreBlurProcessing/pre_blur_processing_stage.tres" id="5_sn1qm"]
-[ext_resource type="Script" uid="uid://bqncdntkvm37v" path="res://addons/SphynxMotionBlurToolkit/PreBlurProcessing/pre_blur_processor.gd" id="6_kbm4d"]
-[ext_resource type="Resource" uid="uid://ca45noqewsyvp" path="res://addons/SphynxMotionBlurToolkit/Guertin/guertin_experimental_blur_stage.tres" id="7_8lxnt"]
-[ext_resource type="Resource" uid="uid://cvb65hfs2lrxo" path="res://addons/SphynxMotionBlurToolkit/Guertin/guertin_neighbor_max_stage.tres" id="8_smyup"]
-[ext_resource type="Resource" uid="uid://bidsfymvdyhek" path="res://addons/SphynxMotionBlurToolkit/Guertin/guertin_overlay_stage.tres" id="9_5km13"]
-[ext_resource type="Script" uid="uid://dcwr7psxdnckb" path="res://addons/SphynxMotionBlurToolkit/Guertin/new_guertin_motion_blur.gd" id="10_3eiow"]
-[ext_resource type="Resource" uid="uid://dipvwksvqb3dm" path="res://addons/SphynxMotionBlurToolkit/Guertin/guertin_tile_max_x_stage.tres" id="11_ci377"]
-[ext_resource type="Resource" uid="uid://bxfg45ubc2pv7" path="res://addons/SphynxMotionBlurToolkit/Guertin/guertin_tile_max_y_stage.tres" id="12_t4rio"]
-[ext_resource type="Resource" uid="uid://bqehecsdgt70s" path="res://addons/SphynxMotionBlurToolkit/Guertin/guertin_tile_variance_stage.tres" id="13_laxdk"]
-[ext_resource type="Script" uid="uid://c7vqavm76pe4h" path="res://addons/SphynxMotionBlurToolkit/BaseClasses/mb_compositor.gd" id="14_r23ed"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4tqr0"]
 albedo_texture = ExtResource("1_isvvm")
@@ -37,65 +24,6 @@ glow_enabled = true
 fog_mode = 1
 fog_density = 1.0
 
-[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_fo3s5"]
-auto_exposure_enabled = true
-dof_blur_far_enabled = true
-dof_blur_far_distance = 50.0
-dof_blur_far_transition = 50.0
-dof_blur_near_enabled = true
-dof_blur_amount = 0.02
-
-[sub_resource type="CompositorEffect" id="CompositorEffect_ttosy"]
-resource_local_to_scene = false
-resource_name = ""
-enabled = true
-effect_callback_type = 4
-needs_motion_vectors = false
-needs_normal_roughness = false
-script = ExtResource("6_kbm4d")
-pre_blur_processor_stage = ExtResource("5_sn1qm")
-camera_rotation_component = ExtResource("3_rdg0y")
-camera_movement_component = ExtResource("2_ttosy")
-object_movement_component = ExtResource("4_56ulr")
-debug = false
-metadata/_custom_type_script = "uid://bqncdntkvm37v"
-
-[sub_resource type="CompositorEffect" id="CompositorEffect_rdg0y"]
-resource_local_to_scene = false
-resource_name = ""
-enabled = true
-effect_callback_type = 4
-needs_motion_vectors = false
-needs_normal_roughness = false
-script = ExtResource("10_3eiow")
-blur_stage = ExtResource("7_8lxnt")
-overlay_stage = ExtResource("9_5km13")
-tile_max_x_stage = ExtResource("11_ci377")
-tile_max_y_stage = ExtResource("12_t4rio")
-neighbor_max_stage = ExtResource("8_smyup")
-tile_variance_stage = ExtResource("13_laxdk")
-tile_size = 40
-linear_falloff_slope = 1.0
-importance_bias = 40.0
-maximum_jitter_value = 0.95
-minimum_user_threshold = 1.5
-debug = false
-metadata/_custom_type_script = "uid://dcwr7psxdnckb"
-
-[sub_resource type="Compositor" id="Compositor_56ulr"]
-compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_ttosy"), SubResource("CompositorEffect_rdg0y")])
-script = ExtResource("14_r23ed")
-samples = 8
-intensity = 1.0
-center_fade = 0.0
-framerate_independent = true
-uncapped_independence = false
-target_constant_framerate = 30.0
-metadata/_custom_type_script = "uid://c7vqavm76pe4h"
-
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ttosy"]
-friction = 0.0
-
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_176aj"]
 points = PackedVector3Array(-0.247465, 0.113436, -0.179355, 0.470113, -0.0645689, 0.289812, -0.406298, -0.228063, 0.395945, -0.025601, 0.471812, 0.588508, 0.134214, -0.104752, -0.72078, 0.398774, -0.229492, 0.397962, -0.104867, -0.227841, -0.567533, 0.121541, 0.203569, -0.248125, -0.489481, -0.108723, 0.27761, -0.375099, -0.11296, 0.57276, 0.395849, 0.0923878, 0.588508, -0.12486, -0.0871048, -0.727705, -0.025601, 0.471812, 0.398767, 0.387735, -0.220107, 0.0905202, -0.112702, 0.203569, -0.248125, 0.251715, 0.113436, -0.159154, 0.380694, -0.1096, 0.562985, -0.377581, 0.0742278, 0.52256, 0.0163954, 0.471812, 0.398767, 0.11359, -0.221711, -0.558882, -0.396245, -0.219516, 0.109835, 0.127174, 0.0381472, -0.57556, -0.374471, 0.0579716, 0.1914, 0.463863, -0.120758, 0.16774, 0.344388, 0.0950926, 0.189531, -0.473325, -0.101321, 0.187329, -0.12726, -0.111535, -0.740514, -0.132306, 0.0404256, -0.560743, 0.455045, -0.0780412, 0.162965, 0.47699, -0.12732, 0.295256, 0.147627, -0.000797297, -0.581059, -0.13043, 0.203403, -0.229791)
 
@@ -107,11 +35,6 @@ use_collision = true
 [node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.5213, 67.5015)
 size = Vector3(50, 1, 180.535)
-material = SubResource("StandardMaterial3D_4tqr0")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D/CSGBox3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.462505, 30.5144, 123.173)
-size = Vector3(50, 62.1007, 69.1928)
 material = SubResource("StandardMaterial3D_4tqr0")
 
 [node name="CSGBox3D2" type="CSGBox3D" parent="CSGCombiner3D"]
@@ -184,12 +107,13 @@ transform = Transform3D(1, 0, 0, 0, 0.919293, -0.393573, 0, 0.393573, 0.919293, 
 size = Vector3(50, 1, 50)
 material = SubResource("StandardMaterial3D_4tqr0")
 
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CSGCombiner3D"]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -13.3835, 63.956, 156.492)
-operation = 2
-radius = 68.0513
-height = 105.045
-sides = 64
+[node name="CSGTorus3D" type="CSGTorus3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.87205, 184.865)
+flip_faces = true
+inner_radius = 35.9315
+outer_radius = 55.752
+sides = 30
+ring_sides = 30
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_filar")
@@ -201,22 +125,12 @@ shadow_enabled = true
 sky_mode = 1
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.86188, 1.60939)
-attributes = SubResource("CameraAttributesPractical_fo3s5")
-compositor = SubResource("Compositor_56ulr")
+transform = Transform3D(1, 0, 0, 0, 0.992115, -0.125333, 0, 0.125333, 0.992115, 0, -2.86188, 1.60939)
 fov = 80.0
 
 [node name="Ship" type="RigidBody3D" parent="."]
-process_mode = 1
-process_priority = 1
-process_physics_priority = 1
-physics_interpolation_mode = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.68188, 0.00939089)
-mass = 0.1
-physics_material_override = SubResource("PhysicsMaterial_ttosy")
-center_of_mass_mode = 1
-inertia = Vector3(0.05, 0.05, 0.05)
-continuous_cd = true
+mass = 0.2
 script = ExtResource("1_176aj")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ship"]
@@ -229,20 +143,16 @@ shape = SubResource("ConvexPolygonShape3D_176aj")
 [node name="Raycasters" type="Node3D" parent="Ship"]
 
 [node name="FrontRay" type="RayCast3D" parent="Ship/Raycasters"]
-transform = Transform3D(1, 0, 0, 0, 0.866026, -0.5, 0, 0.5, 0.866026, 0, -0.175, -0.672018)
+transform = Transform3D(1, 0, 0, 0, 0.519615, -0.999999, 0, 0.3, 1.73205, 0, -0.175, -0.7)
 
 [node name="BackRay" type="RayCast3D" parent="Ship/Raycasters"]
-transform = Transform3D(1, 0, 0, 0, 0.866026, 0.5, 0, -0.5, 0.866026, 0, -0.175, 0.486385)
+transform = Transform3D(1, 0, 0, 0, 0.519615, 0.999999, 0, -0.3, 1.73205, 0, -0.175, 0.5)
 
 [node name="LeftRay" type="RayCast3D" parent="Ship/Raycasters"]
-transform = Transform3D(0.866025, 0.5, 0, -0.5, 0.866025, 0, 0, 0, 1, -0.4, -0.175, 0)
+transform = Transform3D(0.866025, 0.3, 0, -0.5, 0.519615, 0, 0, 0, 2, -0.4, -0.175, 0)
 
 [node name="RightRay" type="RayCast3D" parent="Ship/Raycasters"]
-transform = Transform3D(0.866025, -0.5, 0, 0.5, 0.866025, 0, 0, 0, 1, 0.4, -0.175, 0)
-
-[node name="AngleRay" type="RayCast3D" parent="Ship/Raycasters"]
-transform = Transform3D(1, 0, 0, 0, 0.990268, 0.139173, 0, -0.139173, 0.990268, 0, -0.113418, -0.754314)
-target_position = Vector3(0, 0, -2)
+transform = Transform3D(0.866025, -0.3, 0, 0.5, 0.519615, 0, 0, 0, 2, 0.4, -0.175, 0)
 
 [node name="LeftAirbrake" type="Node3D" parent="Ship"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.36, 0.02, 0.6)
@@ -259,35 +169,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.36, 0.02, 0.6)
 light_color = Color(0.961135, 0.36604, 0.586347, 1)
 light_energy = 2.0
 light_size = 0.162
-
-[node name="CSGCombiner3D2" type="CSGCombiner3D" parent="."]
-transform = Transform3D(1.91069e-15, -4.37114e-08, 5.08018, -1, -4.37114e-08, 0, 4.37114e-08, -1, -2.22062e-07, -775.359, -54.2061, 226.718)
-use_collision = true
-
-[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -134.113, 30.5144, 123.173)
-size = Vector3(50, 62.1007, 69.1928)
-material = SubResource("StandardMaterial3D_4tqr0")
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CSGCombiner3D2"]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -147.034, 70.6594, 157.749)
-operation = 2
-radius = 68.0513
-height = 105.045
-sides = 64
-
-[node name="CSGCombiner3D3" type="CSGCombiner3D" parent="."]
-transform = Transform3D(4.37114e-08, 1, -4.44123e-07, 1, -4.37114e-08, 0, -3.82137e-15, -8.74228e-08, -5.08018, -378.303, 212.905, 625.311)
-use_collision = true
-
-[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -134.113, 30.5144, 123.173)
-size = Vector3(50, 62.1007, 69.1928)
-material = SubResource("StandardMaterial3D_4tqr0")
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CSGCombiner3D3"]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -147.034, 70.6594, 157.749)
-operation = 2
-radius = 68.0513
-height = 105.045
-sides = 64

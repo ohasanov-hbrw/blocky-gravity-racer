@@ -5,13 +5,14 @@ class Thruster:
 	var p = 1
 	var i = 0
 	var d = 0
-	var set_distance = 0.34
+	var set_distance = 0.35
 	var prev_error = 0
 	var integral = 0
-	var max_force = 900
+	var max_force = 1000
 	var min_force = -100
 	var touch = false
 	var current_output = 0
+	var current_distance
 	func _init(raycast, p, i, d) -> void:
 		self.raycast = raycast
 		self.p = p
@@ -25,15 +26,21 @@ class Thruster:
 		if(!raycast.is_colliding()):
 			integral = 0
 			prev_error = 0
+			current_distance = 0
+			current_output = 0
 			return 0
 		touch = true
 		var origin = raycast.global_transform.origin
+		raycast.force_raycast_update()
 		var collision_point = raycast.get_collision_point()
 		var distance = origin.distance_to(collision_point)
+		current_distance = distance
 		var error = set_distance - distance
 		
 		var p_out = p * error
 		
+		if((integral < 0 && error > 0) || (integral > 0 && error < 0)):
+			integral = 0
 		integral += error * delta
 		var i_out = i * integral
 		
@@ -62,25 +69,80 @@ var right_thruster:Thruster
 var front_thruster:Thruster
 var back_thruster:Thruster
 
+var angle_thruster:Thruster
+var torque_thruster:Thruster
+
+var last_velocity:Vector3
+
+var camera_controller:CameraController
+
+class CameraController:
+	var p = 0.2
+	var i = 0.02
+	var d = 0.0006
+	var prev_error = Vector3(0,0,0)
+	var integral = Vector3(0,0,0)
+	var offset = Vector3(0,0,0)
+	
+	var a_p = 0.5
+	var a_i = 0
+	var a_d = 0.0
+	var a_prev_error = Vector3(0,0,0)
+	var a_integral = Vector3(0,0,0)
+	var a_offset = Vector3(0,0,0)
+	
+	
+	func _init() -> void:
+		pass
+	func interpolate_camera_position(target:Vector3, delta:float) -> Vector3:
+		var error:Vector3 = target - offset
+		var p_out = p * error
+		integral += error * delta
+		var i_out = i * integral
+		var derivative:Vector3 = (error - prev_error) / delta
+		var d_out = d * derivative;
+		var output = p_out + i_out + d_out;
+		#print(output)
+		offset += output
+		return offset 
+
 func _ready() -> void:
-	left_thruster = Thruster.new($Raycasters/LeftRay, 700, 70, 60)
-	right_thruster = Thruster.new($Raycasters/RightRay, 700, 50, 60)
-	front_thruster = Thruster.new($Raycasters/FrontRay, 700, 50, 60)
-	back_thruster = Thruster.new($Raycasters/BackRay, 700, 70, 60)
+	left_thruster = Thruster.new($Raycasters/LeftRay, 80, 15, 10)
+	right_thruster = Thruster.new($Raycasters/RightRay, 80, 15, 10)
+	front_thruster = Thruster.new($Raycasters/FrontRay, 200, 35, 10)
+	back_thruster = Thruster.new($Raycasters/BackRay, 200, 35, 10)
+	
+	angle_thruster = Thruster.new($Raycasters/AngleRay, 50, 20, 10)
+	angle_thruster.set_distance = 1.8
+	angle_thruster.min_force = 0
+	
+	back_thruster.set_distance = 0.4
+	front_thruster.set_distance = 0.4
+	camera_controller = CameraController.new()
 	
 func _physics_process(delta: float) -> void:
-	apply_force(delta * (Vector3(0,left_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(left_thruster.raycast.transform.origin) - self.transform.origin)
-	apply_force(delta * (Vector3(0,right_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(right_thruster.raycast.transform.origin) - self.transform.origin)
-	apply_force(delta * (Vector3(0,front_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(front_thruster.raycast.transform.origin) - self.transform.origin)
-	apply_force(delta * (Vector3(0,back_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(back_thruster.raycast.transform.origin) - self.transform.origin)
+	apply_force(delta * (Vector3(0,left_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(left_thruster.raycast.transform.origin + Vector3(-0.4,0,0)) - self.transform.origin)
+	apply_force(delta * (Vector3(0,right_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(right_thruster.raycast.transform.origin + Vector3(0.4,0,0)) - self.transform.origin)
+	apply_force(delta * (Vector3(0,front_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(front_thruster.raycast.transform.origin + Vector3(0,0,-0.4)) - self.transform.origin)
+	apply_force(delta * (Vector3(0,back_thruster.update_physics(delta),0) * self.transform.basis.inverse()), to_global(back_thruster.raycast.transform.origin + Vector3(0,0,0.4)) - self.transform.origin)
+	var angle_output = angle_thruster.update_physics(delta)
+	if(angle_output == 0):
+		angle_thruster.integral = 0
+	apply_force(delta * (Vector3(0,angle_output,0) * self.transform.basis.inverse()), to_global(front_thruster.raycast.transform.origin + Vector3(0,0,-0.1)) - self.transform.origin)
+	apply_force(delta * (Vector3(0,angle_output,0) * self.transform.basis.inverse()), to_global(back_thruster.raycast.transform.origin + Vector3(0,0,0.1)) - self.transform.origin)
+	#apply_torque(delta * (Vector3(angle_thruster.current_output,0,0) * self.transform.basis.inverse()))
+	#apply_central_force(-1 * angle_output * delta * ((linear_velocity * self.transform.basis) * Vector3(0,0,0.01)) * self.transform.basis.inverse())
+	
+	
+	print(angle_thruster.current_output)
 	var airbrake = 3
 	var not_touching_ground = !(left_thruster.touch && right_thruster.touch && front_thruster.touch && back_thruster.touch)
 	
-	print((linear_velocity * self.transform.basis).y)
-	if(!not_touching_ground):
-		apply_torque(0.1 * delta * (Vector3(front_thruster.current_output,0,0) * self.transform.basis.inverse()))
-		apply_torque(0.1 * delta * (Vector3(-back_thruster.current_output,0,0) * self.transform.basis.inverse()))
-		
+	if((linear_velocity * self.transform.basis).y < 0 && !not_touching_ground):
+		if(front_thruster.current_distance < back_thruster.current_distance):
+			apply_central_force(abs(50 * (back_thruster.current_distance - front_thruster.current_distance)) * delta * (Vector3(0,front_thruster.current_output,0)) * self.transform.basis.inverse())
+			apply_torque(abs(2 * (back_thruster.current_distance - front_thruster.current_distance)) * delta * (Vector3(front_thruster.current_output,0,0) * self.transform.basis.inverse()))
+
 	
 	
 	
@@ -88,14 +150,16 @@ func _physics_process(delta: float) -> void:
 		gravity_scale = 1.5
 	else:
 		gravity_scale = 0.2
-	
+
 	if(Input.is_action_pressed("thrust")):
 		if(!Input.is_action_pressed("alt_thrust")):
 			apply_central_force(delta * (Vector3(0,0,-90) * self.transform.basis.inverse()))
 		if(not_touching_ground):
 			apply_torque(delta * (Vector3(-10,0,0) * self.transform.basis.inverse()))
+	
 	if(Input.is_action_pressed("alt_thrust")):
 		apply_central_force(delta * (Vector3(0,0,-90) * self.transform.basis.inverse()))
+	
 	if(Input.is_action_pressed("reverse")):
 		if(not_touching_ground):
 			apply_torque(delta * (Vector3(10,0,0) * self.transform.basis.inverse()))
@@ -136,12 +200,21 @@ func _physics_process(delta: float) -> void:
 			direction = -1
 		if((linear_velocity * self.transform.basis).y > 0):
 			direction = 1
-		apply_central_force(direction * airbrake * delta * Vector3(0,0,1 * abs((linear_velocity * self.transform.basis).x)) * self.transform.basis.inverse())
+		#apply_central_force(direction * airbrake * delta * Vector3(0,0,1 * abs((linear_velocity * self.transform.basis).x)) * self.transform.basis.inverse())
 		apply_central_force(-5 * delta * ((linear_velocity * self.transform.basis) * Vector3(airbrake,0,0.3)) * self.transform.basis.inverse())
+	
 	if(not_touching_ground):
 		apply_torque(-7 * delta * ((angular_velocity * self.transform.basis) * Vector3(1,1,1)) * self.transform.basis.inverse())
 	else:
 		apply_torque(-7 * delta * ((angular_velocity * self.transform.basis) * Vector3(0,1,0)) * self.transform.basis.inverse())
-	if((linear_velocity * self.transform.basis).y < 0):
-		$Camera3D.position.z = 2.3 - min(-0.2 * (linear_velocity * self.transform.basis).y, 1)
-		$Camera3D.fov = 75 - max(2 * (linear_velocity * self.transform.basis).y, -40)
+	
+	$"../Camera3D".position = camera_controller.interpolate_camera_position(to_global(Vector3(0, 1.4, 2.3)), delta)
+	#$"../Camera3D".rotation = camera_controller.interpolate_camera_angle(self.rotation, delta)
+	$"../Camera3D".look_at(to_global(Vector3(0, 0, -2.5)), self.transform.basis.y)
+	last_velocity = (linear_velocity * self.transform.basis)
+	
+	#.set_shader_parameter("linear_velocity", (linear_velocity * self.transform.basis))
+	#print($"../Camera3D".rotation, $"../Camera3D".rotation + rotation)
+	#if((linear_velocity * self.transform.basis).y < 0):
+	#	$Camera3D.position.z = 2.3 - min(-0.2 * (linear_velocity * self.transform.basis).y, 1)
+	#	$Camera3D.fov = 75 - max(2 * (linear_velocity * self.transform.basis).y, -40)
