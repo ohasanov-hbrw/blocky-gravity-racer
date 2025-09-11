@@ -134,7 +134,7 @@ func _physics_process(delta: float) -> void:
 	#apply_central_force(-1 * angle_output * delta * ((linear_velocity * self.transform.basis) * Vector3(0,0,0.01)) * self.transform.basis.inverse())
 	
 	
-	print(angle_thruster.current_output)
+	# print(angle_thruster.current_output)
 	var airbrake = 3
 	var not_touching_ground = !(left_thruster.touch && right_thruster.touch && front_thruster.touch && back_thruster.touch)
 	
@@ -180,7 +180,7 @@ func _physics_process(delta: float) -> void:
 		airbrake = 5
 		if(not_touching_ground):
 			apply_torque(delta * (Vector3(0,10,0) * self.transform.basis.inverse()))
-		apply_force(delta * (Vector3(0,0,-10 * (linear_velocity * self.transform.basis).y) * self.transform.basis.inverse()), to_global($LeftAirbrake.transform.origin) - self.transform.origin)
+		apply_force(delta * (Vector3(0,0,-3 * (linear_velocity * self.transform.basis).z) * self.transform.basis.inverse()), to_global($LeftAirbrake.transform.origin) - self.transform.origin)
 	else:
 		$LeftAirbrake/OmniLight3D.light_energy = 0
 		
@@ -189,20 +189,21 @@ func _physics_process(delta: float) -> void:
 		airbrake = 5
 		if(not_touching_ground):
 			apply_torque(delta * (Vector3(0,-10,0) * self.transform.basis.inverse()))
-		apply_force(delta * (Vector3(0,0,-10 * (linear_velocity * self.transform.basis).y) * self.transform.basis.inverse()), to_global($RightAirbrake.transform.origin) - self.transform.origin)
+		apply_force(delta * (Vector3(0,0,-3 * (linear_velocity * self.transform.basis).z) * self.transform.basis.inverse()), to_global($RightAirbrake.transform.origin) - self.transform.origin)
 	else:
 		$RightAirbrake/OmniLight3D.light_energy = 0
-		
+
 	
 	if(!not_touching_ground):
 		var direction = 0
-		if((linear_velocity * self.transform.basis).y < 0):
+		if((linear_velocity * self.transform.basis).z < 0):
 			direction = -1
-		if((linear_velocity * self.transform.basis).y > 0):
+		if((linear_velocity * self.transform.basis).z > 0):
 			direction = 1
 		#apply_central_force(direction * airbrake * delta * Vector3(0,0,1 * abs((linear_velocity * self.transform.basis).x)) * self.transform.basis.inverse())
 		apply_central_force(-5 * delta * ((linear_velocity * self.transform.basis) * Vector3(airbrake,0,0.3)) * self.transform.basis.inverse())
-	
+	else:
+		apply_central_force(-3.5 * delta * ((linear_velocity * self.transform.basis) * Vector3(airbrake,2,0.5)) * self.transform.basis.inverse())
 	if(not_touching_ground):
 		apply_torque(-7 * delta * ((angular_velocity * self.transform.basis) * Vector3(1,1,1)) * self.transform.basis.inverse())
 	else:
